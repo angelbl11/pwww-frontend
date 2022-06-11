@@ -5,14 +5,10 @@ import {
   Link,
   Image,
   Text,
-  Divider,
   HStack,
   Tag,
-  Wrap,
-  WrapItem,
   useColorModeValue,
   Container,
-  VStack,
 } from '@chakra-ui/react';
 import LandingLayout from '../components/Layouts/LandingLayout';
 
