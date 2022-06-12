@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Button,
   Center,
@@ -20,9 +20,57 @@ import {
   FormLabel,
   Input,
 } from '@chakra-ui/react';
+import { uploadImg } from '../utils';
+import ApiUrl from '../api';
+import axios from 'axios';
 
-const AdminItem = ({ product, uri, description }) => {
-  const { onClose, onOpen, isOpen } = useDisclosure();
+const AdminItem = ({ product, uri, description, id, cost, updateProducts }) => {
+  const {
+    onClose: onCloseEdit,
+    onOpen: onOpenEdit,
+    isOpen: isOpenEdit,
+  } = useDisclosure();
+  const {
+    onClose: onCloseDelete,
+    onOpen: onOpenDelete,
+    isOpen: isOpenDelete,
+  } = useDisclosure();
+
+  const [img, setImg] = useState(uri);
+  const [name, setName] = useState(product);
+  const [desc, setDesc] = useState(description);
+  const [price, setPrice] = useState(cost);
+
+   const onSubmit = async () => {
+      if (!img) {
+         return;
+      }
+
+      onCloseEdit()
+
+      // Sube la imagen
+      let imgUrl;
+      if (typeof img !== String) {
+         imgUrl = await uploadImg(img);
+      } else {
+         imgUrl = img;
+      }
+
+      
+      const updatedProduct = {
+         name,
+         description: desc,
+         price,
+         img: imgUrl,
+      };
+
+      const url = ApiUrl + `product/${id}`
+      const { data } = await axios.put(url, updatedProduct)
+      console.log(data)
+
+      updateProducts()
+   };
+
   return (
     <Center py={6}>
       <Stack
@@ -72,11 +120,11 @@ const AdminItem = ({ product, uri, description }) => {
               _focus={{
                 bg: 'gray.200',
               }}
-              onClick={onOpen}
+              onClick={onOpenEdit}
             >
               Editar
             </Button>
-            <Modal isOpen={isOpen} onClose={onClose}>
+            <Modal isOpen={isOpenEdit} onClose={onCloseEdit}>
               <ModalOverlay />
               <ModalContent>
                 <ModalHeader>Editar Producto</ModalHeader>
@@ -90,6 +138,7 @@ const AdminItem = ({ product, uri, description }) => {
                           _placeholder={{ color: 'gray.500' }}
                           type="file"
                           required
+                          onChange={e => setImg(e.target.files[0])}
                         />
                       </Center>
                     </Stack>
@@ -100,11 +149,18 @@ const AdminItem = ({ product, uri, description }) => {
                       _placeholder={{ color: 'gray.500' }}
                       type="text"
                       required
+                      value={name}
+                      onChange={e => setName(e.target.value)}
                     />
                   </FormControl>
                   <FormControl id="productDescription" isRequired>
                     <FormLabel>Descripción del producto</FormLabel>
-                    <Input _placeholder={{ color: 'gray.500' }} type="text" />
+                    <Input
+                      _placeholder={{ color: 'gray.500' }}
+                      type="text"
+                      value={desc}
+                      onChange={e => setDesc(e.target.value)}
+                    />
                   </FormControl>
                   <FormControl id="productPrice" isRequired>
                     <FormLabel>Precio del producto</FormLabel>
@@ -113,21 +169,24 @@ const AdminItem = ({ product, uri, description }) => {
                       _placeholder={{ color: 'gray.500' }}
                       type="number"
                       required
+                      value={price}
+                      onChange={e => setPrice(e.target.value)}
                     />
                   </FormControl>
                 </ModalBody>
 
                 <ModalFooter>
-                  <Button colorScheme="blue" mr={3} onClick={onClose}>
+                  <Button colorScheme="blue" mr={3} onClick={onCloseEdit}>
                     Cerrar
                   </Button>
-                  <Button variant="ghost" type="submit">
+                  <Button variant="ghost" type="submit" onClick={onSubmit}>
                     Editar
                   </Button>
                 </ModalFooter>
               </ModalContent>
             </Modal>
-            <Modal isOpen={isOpen} onClose={onClose}>
+
+            <Modal isOpen={isOpenDelete} onClose={onCloseDelete}>
               <ModalOverlay />
               <ModalContent>
                 <ModalHeader>Eliminar Producto</ModalHeader>
@@ -137,7 +196,7 @@ const AdminItem = ({ product, uri, description }) => {
                 </ModalBody>
 
                 <ModalFooter>
-                  <Button colorScheme="blue" mr={3} onClick={onClose}>
+                  <Button colorScheme="blue" mr={3} onClick={onCloseDelete}>
                     Cerrar
                   </Button>
                   <Button variant="ghost" type="submit">
@@ -161,7 +220,7 @@ const AdminItem = ({ product, uri, description }) => {
               _focus={{
                 bg: 'blue.500',
               }}
-              onClick={onOpen}
+              onClick={onOpenDelete}
             >
               Borrar
             </Button>

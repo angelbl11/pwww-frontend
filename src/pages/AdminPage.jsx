@@ -8,14 +8,15 @@ const AdminPage = () => {
   const [products, setProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchProducts = async () => {
+   const fetchProducts = async () => {
+      setIsLoading(true);
       const { data } = await axios.get(ApiUrl + 'product');
       const { products } = data;
       setProducts(products);
       setIsLoading(false);
-    };
+   };
 
+  useEffect(() => {
     fetchProducts();
   }, []);
 
@@ -33,7 +34,11 @@ const AdminPage = () => {
         <AdminItem
           key={product._id}
           product={product.name}
-          uri={'https://www.azendportafolio.com/static/img/not-found.png'}
+          description={product.description}
+          cost={product.price}
+          uri={product.img}
+          id={product._id}
+          updateProducts={fetchProducts}
         />
       ))}
     </LandingLayout>
