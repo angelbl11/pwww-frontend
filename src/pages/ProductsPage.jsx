@@ -36,7 +36,7 @@ const ProductsPage = () => {
           description={product.description}
           product={product.name}
           price={product.price}
-          uri={'https://www.azendportafolio.com/static/img/not-found.png'}
+          uri={product.img}
         />
       ))}
     </LandingLayout>

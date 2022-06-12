@@ -41,7 +41,7 @@ const AdminItem = ({ product, uri, description, id, cost, updateProducts }) => {
   const [desc, setDesc] = useState(description);
   const [price, setPrice] = useState(cost);
 
-   const onSubmit = async () => {
+   const handleEdit = async () => {
       if (!img) {
          return;
       }
@@ -70,6 +70,15 @@ const AdminItem = ({ product, uri, description, id, cost, updateProducts }) => {
 
       updateProducts()
    };
+
+   const handleDelete = async () => {
+      onCloseDelete()
+      const url = ApiUrl + `product/${id}`
+      const { data } = await axios.delete(url);
+      console.log(data)
+      updateProducts()
+      
+   }
 
   return (
     <Center py={6}>
@@ -179,7 +188,7 @@ const AdminItem = ({ product, uri, description, id, cost, updateProducts }) => {
                   <Button colorScheme="blue" mr={3} onClick={onCloseEdit}>
                     Cerrar
                   </Button>
-                  <Button variant="ghost" type="submit" onClick={onSubmit}>
+                  <Button variant="ghost" type="submit" onClick={handleEdit}>
                     Editar
                   </Button>
                 </ModalFooter>
@@ -199,7 +208,7 @@ const AdminItem = ({ product, uri, description, id, cost, updateProducts }) => {
                   <Button colorScheme="blue" mr={3} onClick={onCloseDelete}>
                     Cerrar
                   </Button>
-                  <Button variant="ghost" type="submit">
+                  <Button variant="ghost" type="submit" onClick={handleDelete}>
                     Eliminar
                   </Button>
                 </ModalFooter>
